@@ -75,6 +75,8 @@ let mapSettings = {
     }
 }
 
+let colorMap = ['#bfc7ce', '#fae1e1', '#f19898', '#ee7f7f', '#eb6767', '#e55d5d', '#df5353', '#d94848', '#d23d3d', '#cc3333']
+
 function clearMapSettings(){
     for (area of areas) {
         delete area['number']
@@ -83,6 +85,8 @@ function clearMapSettings(){
         delete area['color']
         delete area['fontColor']
     }
+    delete mapSettings['heatmapConditions']
+    delete mapSettings['heatmapColors']
     mapSettings['showHeatmap'] = false
     mapSettings['showHeatlabel'] = false
 }
@@ -91,12 +95,25 @@ function enableHeatmap(unit){
     mapSettings['showHeatmap'] = true
     mapSettings['heatmapLabelUnit'] = unit
     mapSettings['showHeatlabel'] = true
+    delete mapSettings['heatmapConditions']
+    delete mapSettings['heatmapColors']
 }
-
 
 function reloadMap() {
     $('#jmap').jmap('update').empty();
     $('#jmap').jmap(mapSettings);
+}
+
+function enabelCondition(){
+    $('#condition-row').find('.condition-input').val('')
+    $('#condition-row').find('.condition').prop('disabled', false)
+    $('#condition-row').show()
+}
+
+function disableCondition(){
+    $('#condition-row').find('.condition-input').val('')
+    $('#condition-row').find('.condition').prop('disabled', true)
+    $('#condition-row').hide()
 }
 
 function runQuery(query) {
@@ -109,6 +126,8 @@ function runQuery(query) {
     }
     return $.ajax(endpoint, settings)
 }
+
+
 
 
 // 人口割合を描画
@@ -267,18 +286,52 @@ function clickView() {
     let val = $('#statistics').val()
     if (val == 'population') {
         viewPopulation().then(reloadMap)
+        enabelCondition()
     } else if (val == 'hightest-point') {
         viewHightestPoint().then(reloadMap)
+        enabelCondition()
     } else if (val == 'area') {
         viewArea().then(reloadMap)
+        enabelCondition()
     } else {
+        disableCondition()
         clearMapSettings()
         reloadMap()
     }
     $('#view').prop('disabled', false);
 }
 
+
+function clickChange() {
+    let conditions = []
+    $(".condition-input").each(function(){
+        if ($(this).val() != '') {
+            conditions.push($(this).val())
+        }
+    })
+    if (conditions.length == 0) return
+
+    for (area of areas) {
+        delete area['color']
+        delete area['fontColor']
+    }
+    let colors = []
+    if (conditions.length == 1) {
+        colors.push(colorMap[colorMap.length-1])
+    }else{
+        step = Math.floor((colorMap.length-1) / (conditions.length-1))
+        for(i = 0; i < colorMap.length; i += step) {
+            colors.push(colorMap[i])
+        }
+    }
+    mapSettings['heatmapConditions'] = conditions
+    mapSettings['heatmapColors'] = colors
+    reloadMap()
+}
+
 $(document).ready(function () {
     $('#jmap').jmap(mapSettings);
     $('#view').click(clickView)
+    $('#change').click(clickChange)
+    disableCondition()
 });

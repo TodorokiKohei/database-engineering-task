@@ -25,18 +25,43 @@
           </select>
         </div>
         <div class="col-2">
-          <button type="button" class="btn btn-primary" id="view">view</button>
+          <button type="button" class="btn btn-primary" id="view">View</button>
         </div>
       </div>
-      <div class="row">
-        <div class="col-1"></div>
-      </div>
+
     </div>
   </header>
 
   <main>
+
     <div class="container py-2">
       <div id="jmap"></div>
+    </div>
+    <div class="container pt-3 pb-5">
+      <div id="condition-row" class="row">
+        <div class="row">
+          <p class="px-3 mb-1 fw-bold">
+            ヒートマップのスケールを最大で10パターンまで設定できます</br>
+          </p>
+          <ul>
+            <li>x≧3 をスケールに設定したい場合は <strong>&gt;=3</strong> を入力</li>
+            <li>0&lt;x&lt;2, 2≦x&lt;5, x≧5 をスケールに設定したい場合は<strong> &lt;2, &gt;=2, &gt;=5 </strong>を入力</li>
+          </ul>
+        </div>
+        <div class="row">
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-1"><input class="form-control col-1 condition condition-input" type="text" disabled></div>
+          <div class="col-2"><button type="button" class="btn btn-primary condition condition-btn" id="change" disabled>Change Scale</button></div>
+        </div>
+      </div>
     </div>
     <div class="modal fade" id="prefectureModal" tabindex="-1" aria-labelledby="prefectureModalLabel" aria-hidden="true">
       <div class="modal-dialog">
