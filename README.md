@@ -1,11 +1,11 @@
 # 統計量可視化マップ(Statistics Visualization Map)
-Wikidataから取得可能な統計量を日本地図上で可視化できるアプリケーション  
-An application that allows visualization of statistics available from Wikidata on a map of Japan
+Wikidataから取得可能な各県の統計量を日本地図上で可視化できるアプリケーション  
+An application that allows you to visualize the statistics for each prefecture available from Wikidata on a map of Japan  
 
 
 ## 使い方(Usage)
 1. `index.html`をダブルクリックしてアプリケーションを起動する  
-Double-click index.html to launch the application
+Double-click index.html to launch the application  
 2. 左上のメニューから可視化したい統計量を選択し、`View`をクリックすると統計量が地図上に反映される  
 Select the statistic you want to visualize from the menu in the upper left corner and click `View` to reflect the statistic on the map.  
 ![1](./gif/1_View.gif)
