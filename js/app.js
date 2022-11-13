@@ -304,9 +304,15 @@ function clickView() {
 
 function clickChange() {
     let conditions = []
+    let re = new RegExp(/^(<|>)=?\d+\.?\d*$/);
     $(".condition-input").each(function(){
-        if ($(this).val() != '') {
-            conditions.push($(this).val())
+        let input_text = $(this).val()
+        if (input_text != '') {
+            if (!re.test(input_text)) {
+                alert("有効な文字列ではありません\n\"<=3\"や\">5\"などで指定してください")
+                return 
+            }
+            conditions.push(input_text)
         }
     })
     if (conditions.length == 0) return
