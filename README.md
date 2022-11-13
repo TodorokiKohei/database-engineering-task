@@ -8,13 +8,16 @@ An application that allows visualization of statistics available from Wikidata o
 Double-click index.html to launch the application
 2. 左上のメニューから可視化したい統計量を選択し、`View`をクリックすると統計量が地図上に反映される  
 Select the statistic you want to visualize from the menu in the upper left corner and click `View` to reflect the statistic on the map.  
-
-3. 県にマウスカーソルを重ねると統計量が確認できる  
-Hover the mouse cursor over a prefecture to see statistics.
-4. 県をクリックすると詳細な情報が確認できる  
-Click on a prefecture for more information.
-5. ヒートマップのスケールを変更することもできる  
-The scale of the heatmap can also be changed
+![1](./gif/1_View.gif)
+1. 県にマウスカーソルを重ねると統計量が確認できる  
+Hover the mouse cursor over a prefecture to see statistics.  
+![2](./gif/2_Hover.gif)
+1. 県をクリックすると詳細な情報が確認できる  
+Click on a prefecture for more information.  
+![3](./gif/3_Modal.gif)
+1. ヒートマップのスケールを変更することもできる  
+The scale of the heatmap can also be changed   
+![4](./gif/4_Heatmap.gif)
 
 ## 利用したライブラリ
 * [Jmap jQuery plugin](https://yugokimura.github.io/jmap/)
