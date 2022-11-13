@@ -49,16 +49,50 @@ let areas = [
 ]
 
 let mapSettings = {
-    height: '70%',
+    height: '75%',
     skew: '10',
-    backgroundColor: '#6FCFDD',
-    backgroundRadius: '0.5rem',
     showRoundedPrefecture: true,
     prefectureBackgroundColor: '#62B34C',
     prefectureBackgroundHoverColor: '#95A834',
     prefectureRadius: '15px',
     areas: areas,
+    onHover: function(e, data){
+        html = `<div>${data.name}</div>\n`
+        if (data.option.number) {
+            html += `<strong>${data.option.hoverText}</strong>\n`
+        }
+        $(this).html(html);
+    },
+    onMouseout: function(e, data){
+        $(this).html(`<div>${data.name}</div>`);
+    },
+    onSelect: function(e, data) {
+        $('#prefectureModal').find('#modalLabel')
+        .text(`${data.name}(${data.alphabet})`)
+        .end().find('.modal-body')
+        .html(data.option.selectHTML)
+        .end().modal('show');
+    }
 }
+
+function clearMapSettings(){
+    for (area of areas) {
+        delete area['number']
+        delete area['hoverText']
+        delete area['selectHTML']
+        delete area['color']
+        delete area['fontColor']
+    }
+    mapSettings['showHeatmap'] = false
+    mapSettings['showHeatlabel'] = false
+}
+
+function enableHeatmap(unit){
+    mapSettings['showHeatmap'] = true
+    mapSettings['heatmapLabelUnit'] = unit
+    mapSettings['showHeatlabel'] = true
+}
+
 
 function reloadMap() {
     $('#jmap').jmap('update').empty();
@@ -76,24 +110,11 @@ function runQuery(query) {
     return $.ajax(endpoint, settings)
 }
 
-function setValueToArea(results, labelName, valueName) {
-    let prefectureData = {}
-    for (let i = 0; i < results.length; i++) {
-        prefectureLabel = results[i][labelName]["value"].replace(/県|府|都$/, '')
-        prefectureValue = parseFloat(results[i][valueName]["value"])
-        prefectureData[prefectureLabel] = { 
-            "number": prefectureValue 
-        }
-    }
-    for (area of areas) {
-        area['number'] = prefectureData[area['name']]['number']
-    }
-    return prefectureData
-}
 
+// 人口割合を描画
 function viewPopulation() {
     let query = `
-SELECT ?prefectureLabel ?year ?population ( round (?population / ?japanPopulation * 1000) / 10 AS ?percentage )
+SELECT ?prefecture ?prefectureLabel ?year ?population ( round (?population / ?japanPopulation * 1000) / 10 AS ?percentage )
 WHERE {
   ?prefecture wdt:P31 wd:Q50337;
               wdt:P1082 ?population.
@@ -120,29 +141,39 @@ WHERE {
     `
     return runQuery(query).then(
         function (data) {
-            // クエリの結果を都道府県のオブジェクトに設定
             let results = data["results"]["bindings"];
             let prefectureData = {}
             for (let i = 0; i < results.length; i++) {
                 prefectureLabel = results[i]["prefectureLabel"]["value"].replace(/県|府|都$/, '')
                 prefectureValue = parseFloat(results[i]["percentage"]["value"])
                 prefectureData[prefectureLabel] = { 
-                    "number": prefectureValue 
+                    "number": prefectureValue,
+                    "hoverText": prefectureValue + " %",
+                    "selectHTML": `
+                        <p>人口(Population): <strong>${Number(results[i]["population"]["value"]).toLocaleString()} [人]</strong></p>
+                        <p>人口割合(PopulationPercentage): <strong>${results[i]["percentage"]["value"]} [%]</strong></p>
+                        <p>集計された日(AggregatedDate): <strong>${results[i]["year"]["value"]}</strong></p>
+                        <p>Wikidata: 
+                        <a href="${results[i]["prefecture"]["value"]}" target="_blank">
+                            ${results[i]["prefecture"]["value"]}
+                        </a></p>
+                    `,
                 }
             }
             for (area of areas) {
                 area['number'] = prefectureData[area['name']]['number']
+                area['hoverText'] = prefectureData[area['name']]['hoverText']
+                area['selectHTML'] = prefectureData[area['name']]['selectHTML']
             }
-            // 描画設定のヒートマップを有効化
-            mapSettings['showHeatmap'] = true
-            mapSettings['heatmapLabelUnit'] = '%'
-            mapSettings['showHeatlabel'] = true
+            enableHeatmap('%')
         })
 }
 
+
+// 最高点を描画
 function viewHightestPoint() {
     let query = `
-SELECT ?prefectureLabel ?mountainLabel ?high
+SELECT ?prefecture ?prefectureLabel ?mountain ?mountainLabel ?high
 WHERE {
     ?prefecture wdt:P31 wd:Q50337;
                 wdt:P610 ?mountain.
@@ -155,30 +186,43 @@ WHERE {
     `
     return runQuery(query).then(
         function (data) {
-            // クエリの結果を都道府県のオブジェクトに設定
             let results = data["results"]["bindings"];
             let prefectureData = {}
             for (let i = 0; i < results.length; i++) {
                 prefectureLabel = results[i]["prefectureLabel"]["value"].replace(/県|府|都$/, '')
-                prefectureValue = parseFloat(results[i]["high"]["value"])
+                prefectureValue = parseInt(results[i]["high"]["value"])
                 prefectureData[prefectureLabel] = { 
-                    "number": prefectureValue 
-
+                    "number": prefectureValue,
+                    "hoverText": prefectureValue.toLocaleString() + " m",
+                    "selectHTML": `
+                        <p>最高点(HighestPoint): <strong>${prefectureValue.toLocaleString()} [m]</strong></p>
+                        <p>山(Mountain): 
+                        <a href="${results[i]["mountain"]["value"]}" target="_blank">
+                            ${results[i]["mountainLabel"]["value"]}
+                        </a>
+                        </p>
+                        <p>Wikidata: 
+                        <a href="${results[i]["prefecture"]["value"]}" target="_blank">
+                            ${results[i]["prefecture"]["value"]}
+                        </a>
+                        </p>
+                `,
                 }
             }
             for (area of areas) {
                 area['number'] = prefectureData[area['name']]['number']
+                area['hoverText'] = prefectureData[area['name']]['hoverText']
+                area['selectHTML'] = prefectureData[area['name']]['selectHTML']
             }
-            // 描画設定のヒートマップを有効化
-            mapSettings['showHeatmap'] = true
-            mapSettings['heatmapLabelUnit'] = 'm'
-            mapSettings['showHeatlabel'] = true
+            enableHeatmap('m')
         })
 }
 
+
+// 面積を描画
 function viewArea() {
     let query = `
-SELECT ?prefectureLabel ?area 
+SELECT ?prefecture ?prefectureLabel ?area 
 WHERE {
     ?prefecture wdt:P31 wd:Q50337;
                 wdt:P2046 ?area.
@@ -191,24 +235,30 @@ WHERE {
     `
     return runQuery(query).then(
         function (data) {
-            // クエリの結果を都道府県のオブジェクトに設定
             let results = data["results"]["bindings"];
             let prefectureData = {}
             for (let i = 0; i < results.length; i++) {
                 prefectureLabel = results[i]["prefectureLabel"]["value"].replace(/県|府|都$/, '')
-                prefectureValue = parseFloat(results[i]["area"]["value"])
+                prefectureValue = parseInt(results[i]["area"]["value"])
                 prefectureData[prefectureLabel] = { 
-                    "number": prefectureValue 
-
+                    "number": prefectureValue,
+                    "hoverText": prefectureValue.toLocaleString() + " Km^2",
+                    "selectHTML": `
+                        <p>面積(Area): <strong>${prefectureValue.toLocaleString()} [Km^2]</strong></p>
+                        <p>Wikidata: 
+                        <a href="${results[i]["prefecture"]["value"]}" target="_blank">
+                            ${results[i]["prefecture"]["value"]}
+                        </a>
+                        </p>
+                `,
                 }
             }
             for (area of areas) {
                 area['number'] = prefectureData[area['name']]['number']
+                area['hoverText'] = prefectureData[area['name']]['hoverText']
+                area['selectHTML'] = prefectureData[area['name']]['selectHTML']
             }
-            // 描画設定のヒートマップを有効化
-            mapSettings['showHeatmap'] = true
-            mapSettings['heatmapLabelUnit'] = 'km^2'
-            mapSettings['showHeatlabel'] = true
+            enableHeatmap('Km^2')
         })
 }
 
@@ -221,6 +271,9 @@ function clickView() {
         viewHightestPoint().then(reloadMap)
     } else if (val == 'area') {
         viewArea().then(reloadMap)
+    } else {
+        clearMapSettings()
+        reloadMap()
     }
     $('#view').prop('disabled', false);
 }
