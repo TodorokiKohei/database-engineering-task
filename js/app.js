@@ -149,9 +149,9 @@ WHERE {
     WHERE {
       ?p wdt:P31 wd:Q50337.
       ?p p:P1082 [pq:P585 ?y].
-    FILTER NOT EXISTS {
-      ?p wdt:P31 wd:Q19953632.
-    }
+      FILTER NOT EXISTS {
+        ?p wdt:P31 wd:Q19953632.
+      }
     }
     GROUP BY ?p
   }

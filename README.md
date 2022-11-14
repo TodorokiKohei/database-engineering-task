@@ -20,6 +20,7 @@ The scale of the heatmap can also be changed
 ![4](./gif/4_Heatmap.gif)
 
 ## 利用したライブラリ
+* [jQuery](https://jquery.com/)
 * [Jmap jQuery plugin](https://yugokimura.github.io/jmap/)
 
 
@@ -27,7 +28,7 @@ The scale of the heatmap can also be changed
 ### 都道府県の人口数
 最新の人口のみを取得する
 ```
-SELECT ?prefectureLabel ?year ?population ( round (?population / ?japanPopulation * 1000) / 10 AS ?percentage )
+SELECT ?prefecture ?prefectureLabel ?year ?population ( round (?population / ?japanPopulation * 1000) / 10 AS ?percentage )
 WHERE {
   ?prefecture wdt:P31 wd:Q50337;
               wdt:P1082 ?population.
@@ -41,11 +42,11 @@ WHERE {
   {
     SELECT ?p ( MAX(?y) as ?recentYear)
     WHERE {
-     ?p wdt:P31 wd:Q50337.
-     ?p p:P1082 [pq:P585 ?y].
-    FILTER NOT EXISTS {
-      ?p wdt:P31 wd:Q19953632.
-    }
+      ?p wdt:P31 wd:Q50337.
+      ?p p:P1082 [pq:P585 ?y].
+      FILTER NOT EXISTS {
+        ?p wdt:P31 wd:Q19953632.
+      }
     }
     GROUP BY ?p
   }
@@ -56,29 +57,29 @@ WHERE {
 ### 都道府県の最高点
 最高点となる山とその標高を取得する
 ```
-SELECT ?prefectureLabel ?mountainLabel ?high
+SELECT ?prefecture ?prefectureLabel ?mountain ?mountainLabel ?high
 WHERE {
-  ?prefecture wdt:P31 wd:Q50337;
-              wdt:P610 ?mountain.
-  ?mountain wdt:P2044 ?high.
-  FILTER NOT EXISTS {
+    ?prefecture wdt:P31 wd:Q50337;
+                wdt:P610 ?mountain.
+    ?mountain wdt:P2044 ?high.
+    FILTER NOT EXISTS {
     ?prefecture wdt:P31 wd:Q19953632.
-  }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],ja". }
-}
+    }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],ja". }
+}    
 ```
 
 ### 都道府県の面積
 面積を取得する
 ```
-SELECT ?prefectureLabel ?area 
+SELECT ?prefecture ?prefectureLabel ?area 
 WHERE {
-  ?prefecture wdt:P31 wd:Q50337;
-              wdt:P2046 ?area.
-  
-  FILTER NOT EXISTS {
+    ?prefecture wdt:P31 wd:Q50337;
+                wdt:P2046 ?area.
+    
+    FILTER NOT EXISTS {
     ?prefecture wdt:P31 wd:Q19953632.
-  }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],ja". }
+    }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],ja". }
 }
 ```
