@@ -4,6 +4,8 @@ An application that allows you to visualize the statistical data for each prefec
 
 
 ## 使い方(Usage)
+1. zipファイルの場合は展開する  
+If it is a zip file, expand it.
 1. `index.html`をダブルクリックしてアプリケーションを起動する  
 Double-click index.html to launch the application  
 2. 左上のメニューから可視化したい統計データを選択し、`View`をクリックすると統計量が地図上に反映される  
