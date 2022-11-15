@@ -10,16 +10,16 @@ If it is a zip file, expand it.
 Double-click index.html to launch the application  
 2. 左上のメニューから可視化したい統計データを選択し、`View`をクリックすると統計量が地図上に反映される  
 Select the statistical data you want to visualize from the menu in the upper left corner and click `View` to reflect the statistic on the map.  
-![1](./gif/1_View.gif)
+<video src="./mp4/1_View.mp4" width="1200" autoplay loop muted></video>
 1. 県にマウスカーソルを重ねると統計データが確認できる  
 Hover the mouse cursor over a prefecture to see statistical data.  
-![2](./gif/2_Hover.gif)
+<video src="./mp4/2_Hover.mp4" width="1200" autoplay loop muted></video>
 1. 県をクリックすると詳細な情報が確認できる  
 Click on a prefecture for more information.  
-![3](./gif/3_Modal.gif)
+<video src="./mp4/3_Modal.mp4" width="1200" autoplay loop muted></video>
 1. ヒートマップのスケールを変更することもできる  
 The scale of the heatmap can also be changed   
-![4](./gif/4_Heatmap.gif)
+<video src="./mp4/4_Heatmap.mp4" width="1200" autoplay loop muted></video>
 
 ## 利用したライブラリ
 * [jQuery](https://jquery.com/)
